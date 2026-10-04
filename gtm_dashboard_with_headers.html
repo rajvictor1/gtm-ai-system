@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GTM AI Dashboard - Interactive Edition</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1a1f35 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #e2e8f0;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+            border: 1px solid #475569;
+        }
+
+        h1 {
+            color: #f1f5f9;
+            font-size: 32px;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #60a5fa 0%, #34d399 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid #475569;
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            border-color: #60a5fa;
+            box-shadow: 0 10px 30px rgba(96, 165, 250, 0.2);
+        }
+
+        .metric-label {
+            color: #94a3b8;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #60a5fa 0%, #34d399 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            height: 380px;
+            transition: all 0.3s;
+        }
+
+        .chart-container:hover {
+            border-color: #60a5fa;
+            box-shadow: 0 8px 25px rgba(96, 165, 250, 0.15);
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 15px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            padding: 15px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 12px;
+            border: 1px solid #334155;
+        }
+
+        .filter-btn {
+            padding: 10px 18px;
+            border: 2px solid #475569;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: #cbd5e1;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover {
+            border-color: #60a5fa;
+            color: #60a5fa;
+            background: rgba(96, 165, 250, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #60a5fa 0%, #34d399 100%);
+            color: #0f172a;
+            border-color: #60a5fa;
+            font-weight: 600;
+        }
+
+        .accounts-container {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 12px;
+            border: 1px solid #334155;
+            overflow: hidden;
+        }
+
+        .accounts-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #0f172a 0%, #1a1f35 100%);
+            font-weight: 600;
+            color: #f1f5f9;
+            border-bottom: 1px solid #334155;
+        }
+
+        .account-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #334155;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .account-item:hover {
+            background: rgba(96, 165, 250, 0.08);
+            padding-left: 25px;
+        }
+
+        .account-main {
+            display: grid;
+            grid-template-columns: 250px 70px 70px 80px 100px;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .account-name {
+            font-weight: 600;
+            color: #f1f5f9;
+            font-size: 14px;
+        }
+
+        .account-meta {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .account-score {
+            text-align: center;
+            font-weight: 600;
+            color: #60a5fa;
+        }
+
+        .account-segment {
+            text-align: center;
+            font-size: 11px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .segment-qualified {
+            background: rgba(34, 197, 94, 0.25);
+            color: #86efac;
+            border: 1px solid #22c55e;
+        }
+
+        .segment-strategic {
+            background: rgba(59, 130, 246, 0.25);
+            color: #93c5fd;
+            border: 1px solid #3b82f6;
+        }
+
+        .segment-emerging {
+            background: rgba(251, 146, 60, 0.25);
+            color: #fed7aa;
+            border: 1px solid #fb923c;
+        }
+
+        .segment-low {
+            background: rgba(239, 68, 68, 0.25);
+            color: #fca5a5;
+            border: 1px solid #ef4444;
+        }
+
+        /* HEADER ROW FOR DETAILS */
+        .account-details-header {
+            display: none;
+            padding: 12px 0;
+            color: #60a5fa;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-top: 2px solid #334155;
+            border-bottom: 2px solid #334155;
+            margin-top: 10px;
+            grid-column: 1 / -1;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        .account-details-header.show {
+            display: grid;
+        }
+
+        .account-details {
+            display: none;
+            padding: 12px 0;
+            color: #cbd5e1;
+            font-size: 13px;
+            grid-column: 1 / -1;
+        }
+
+        .account-details.show {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .detail-item {
+            background: rgba(96, 165, 250, 0.1);
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #60a5fa;
+        }
+
+        .detail-value {
+            color: #f1f5f9;
+            font-weight: 600;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-close {
+            float: right;
+            cursor: pointer;
+            font-size: 24px;
+            color: #cbd5e1;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: #f1f5f9;
+        }
+
+        .modal-title {
+            color: #f1f5f9;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            clear: both;
+        }
+
+        .modal-section {
+            margin-bottom: 20px;
+        }
+
+        .modal-section-title {
+            color: #60a5fa;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .modal-section-content {
+            color: #cbd5e1;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .action-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #60a5fa 0%, #34d399 100%);
+            color: #0f172a;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(96, 165, 250, 0.4);
+        }
+
+        .export-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #60a5fa 0%, #34d399 100%);
+            color: #0f172a;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-left: auto;
+            transition: all 0.3s;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(96, 165, 250, 0.4);
+        }
+
+        .toggle-icon {
+            font-size: 12px;
+            transition: transform 0.3s;
+        }
+
+        .account-item.expanded .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        @media (max-width: 768px) {
+            .account-main {
+                grid-template-columns: 1fr;
+            }
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            .account-details-header.show,
+            .account-details.show {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 GTM AI Dashboard - Interactive Edition</h1>
+            <p class="subtitle">Click accounts to expand • Real-time interactive with headers • Fully detailed view</p>
+        </header>
+
+        <div class="search-box">
+            <input type="text" class="search-input" id="searchInput" placeholder="🔍 Search companies...">
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card" onclick="highlightSegment('all')">
+                <div class="metric-label">📊 Total Accounts</div>
+                <div class="metric-value" id="totalAccounts">0</div>
+            </div>
+            <div class="metric-card" onclick="highlightSegment('qualified_inbound')">
+                <div class="metric-label">🚀 Hot Accounts</div>
+                <div class="metric-value" id="hotCount">0</div>
+            </div>
+            <div class="metric-card" onclick="highlightSegment('strategic_fit')">
+                <div class="metric-label">📈 Strategic Fits</div>
+                <div class="metric-value" id="strategicCount">0</div>
+            </div>
+            <div class="metric-card" onclick="highlightSegment('emerging')">
+                <div class="metric-label">🔥 Emerging</div>
+                <div class="metric-value" id="emergingCount">0</div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-container">
+                <div class="chart-title">📊 Segment Distribution</div>
+                <canvas id="segmentChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">🎯 ICP Fit vs Intent</div>
+                <canvas id="scatterChart"></canvas>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="filter-btn active" data-segment="all" onclick="filterSegment(this)">All Accounts</button>
+            <button class="filter-btn" data-segment="qualified_inbound" onclick="filterSegment(this)">🚀 Hot</button>
+            <button class="filter-btn" data-segment="strategic_fit" onclick="filterSegment(this)">📈 Strategic</button>
+            <button class="filter-btn" data-segment="emerging" onclick="filterSegment(this)">🔥 Emerging</button>
+            <button class="filter-btn" data-segment="low_priority" onclick="filterSegment(this)">👀 Cold</button>
+            <button class="export-btn" onclick="exportData()">📥 Export CSV</button>
+        </div>
+
+        <div class="accounts-container">
+            <div class="accounts-header">🏢 Click any account to expand and see details</div>
+            <div id="accountsList"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="accountModal" onclick="if(event.target == this) closeModal()">
+        <div class="modal-content" id="modalContent"></div>
+    </div>
+
+    <script>
+        const accounts = [
+            {id: "ACC_H01", name: "FastGrow SaaS", industry: "SaaS", size: 450, revenue: 35.5, icp: 92, intent: 85, segment: "qualified_inbound", signals: 5, location: "US", founded: 2018},
+            {id: "ACC_H02", name: "PaymentPro", industry: "FinTech", size: 680, revenue: 52.3, icp: 90, intent: 82, segment: "qualified_inbound", signals: 4, location: "UK", founded: 2017},
+            {id: "ACC_H03", name: "DataFlow Analytics", industry: "SaaS", size: 520, revenue: 42.1, icp: 88, intent: 79, segment: "qualified_inbound", signals: 4, location: "Canada", founded: 2019},
+            {id: "ACC_M01", name: "CloudDeploy Systems", industry: "SaaS", size: 780, revenue: 62.4, icp: 85, intent: 45, segment: "strategic_fit", signals: 2, location: "Germany", founded: 2016},
+            {id: "ACC_M02", name: "MarketingCloud Suite", industry: "MarTech", size: 680, revenue: 52.1, icp: 82, intent: 48, segment: "strategic_fit", signals: 2, location: "US", founded: 2015},
+            {id: "ACC_M03", name: "HealthTech Innovations", industry: "Healthcare", size: 450, revenue: 28.9, icp: 80, intent: 35, segment: "emerging", signals: 2, location: "Canada", founded: 2017},
+            {id: "ACC_M04", name: "EduSoft Learning", industry: "EdTech", size: 220, revenue: 16.4, icp: 78, intent: 28, segment: "emerging", signals: 1, location: "India", founded: 2020},
+            {id: "ACC_M05", name: "SecurityCore Systems", industry: "SaaS", size: 920, revenue: 72.3, icp: 83, intent: 42, segment: "strategic_fit", signals: 2, location: "US", founded: 2014},
+            {id: "ACC_M06", name: "RetailX Platform", industry: "Retail", size: 1800, revenue: 95.3, icp: 45, intent: 38, segment: "emerging", signals: 1, location: "Australia", founded: 2013},
+            {id: "ACC_C01", name: "DataAnalytics Enterprise", industry: "SaaS", size: 1400, revenue: 108.5, icp: 80, intent: 12, segment: "low_priority", signals: 1, location: "US", founded: 2012},
+            {id: "ACC_C02", name: "PaymentFlow Tech", industry: "FinTech", size: 650, revenue: 55.8, icp: 80, intent: 15, segment: "low_priority", signals: 1, location: "UK", founded: 2013},
+            {id: "ACC_C03", name: "CloudInfrastructure", industry: "SaaS", size: 1250, revenue: 95.8, icp: 80, intent: 14, segment: "low_priority", signals: 1, location: "Germany", founded: 2013},
+            {id: "ACC_C04", name: "TechCorp Solutions", industry: "SaaS", size: 520, revenue: 45.2, icp: 80, intent: 10, segment: "low_priority", signals: 0, location: "US", founded: 2015},
+            {id: "ACC_C05", name: "FinanceCloud Pro", industry: "FinTech", size: 1100, revenue: 85.2, icp: 80, intent: 8, segment: "low_priority", signals: 0, location: "US", founded: 2013},
+            {id: "ACC_C06", name: "InsureAI Solutions", industry: "Insurance", size: 2500, revenue: 150.0, icp: 50, intent: 5, segment: "low_priority", signals: 0, location: "US", founded: 2010},
+        ];
+
+        let currentFilter = 'all';
+        let chartInstances = {};
+
+        function updateStats() {
+            const qual = accounts.filter(a => a.segment === 'qualified_inbound').length;
+            const strat = accounts.filter(a => a.segment === 'strategic_fit').length;
+            const emer = accounts.filter(a => a.segment === 'emerging').length;
+            document.getElementById('totalAccounts').textContent = accounts.length;
+            document.getElementById('hotCount').textContent = qual;
+            document.getElementById('strategicCount').textContent = strat;
+            document.getElementById('emergingCount').textContent = emer;
+        }
+
+        function initCharts() {
+            Chart.defaults.color = '#cbd5e1';
+
+            const qual = accounts.filter(a => a.segment === 'qualified_inbound').length;
+            const strat = accounts.filter(a => a.segment === 'strategic_fit').length;
+            const emer = accounts.filter(a => a.segment === 'emerging').length;
+            const low = accounts.filter(a => a.segment === 'low_priority').length;
+
+            if (chartInstances.segment) chartInstances.segment.destroy();
+            chartInstances.segment = new Chart(document.getElementById('segmentChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Hot (Qualified)', 'Strategic Fit', 'Emerging', 'Cold (Low Priority)'],
+                    datasets: [{
+                        data: [qual, strat, emer, low],
+                        backgroundColor: ['#86efac', '#93c5fd', '#fed7aa', '#fca5a5'],
+                        borderColor: '#1e293b',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {color: '#cbd5e1', padding: 15, font: {size: 11}}
+                        }
+                    }
+                }
+            });
+
+            if (chartInstances.scatter) chartInstances.scatter.destroy();
+            const scatterData = accounts.map(a => ({x: a.icp, y: a.intent}));
+            chartInstances.scatter = new Chart(document.getElementById('scatterChart'), {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Accounts',
+                        data: scatterData,
+                        backgroundColor: 'rgba(96, 165, 250, 0.6)',
+                        borderColor: '#60a5fa',
+                        borderWidth: 2,
+                        radius: 7,
+                        hoverRadius: 9
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {legend: {display: false}},
+                    scales: {
+                        x: {title: {display: true, text: 'ICP Fit →', color: '#cbd5e1'}, min: 0, max: 100, ticks: {color: '#cbd5e1'}, grid: {color: '#334155'}},
+                        y: {title: {display: true, text: '← Intent', color: '#cbd5e1'}, min: 0, max: 100, ticks: {color: '#cbd5e1'}, grid: {color: '#334155'}}
+                    }
+                }
+            });
+        }
+
+        function filterSegment(btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.getAttribute('data-segment');
+            renderAccounts();
+        }
+
+        function highlightSegment(segment) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            if (segment !== 'all') {
+                document.querySelector(`[data-segment="${segment}"]`).classList.add('active');
+            } else {
+                document.querySelector(`[data-segment="all"]`).classList.add('active');
+            }
+            currentFilter = segment;
+            renderAccounts();
+        }
+
+        function renderAccounts() {
+            const filtered = currentFilter === 'all' ? accounts : accounts.filter(a => a.segment === currentFilter);
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const searched = filtered.filter(a => a.name.toLowerCase().includes(searchTerm));
+
+            const html = searched.map((a, idx) => {
+                const combined = ((a.icp + a.intent) / 2).toFixed(0);
+                const segClass = `segment-${a.segment.replace(/_/g, '')}`;
+                return `
+                    <div class="account-item" onclick="toggleAccountDetails(this, '${a.id}')">
+                        <div class="account-main">
+                            <div>
+                                <div class="account-name">${idx + 1}. ${a.name} <span class="toggle-icon">▼</span></div>
+                                <div class="account-meta">${a.industry} • ${a.size} employees • $${a.revenue}M</div>
+                            </div>
+                            <div class="account-score">${a.icp}</div>
+                            <div class="account-score">${a.intent}</div>
+                            <div class="account-score">${combined}</div>
+                            <div class="account-segment ${segClass}">${a.segment.replace(/_/g, ' ')}</div>
+                        </div>
+
+                        <div class="account-details-header" id="header-${a.id}">
+                            <div>📅 FOUNDED</div>
+                            <div>📍 LOCATION</div>
+                            <div>🔔 BUYING SIGNALS</div>
+                            <div>⚡ ACTION</div>
+                        </div>
+
+                        <div class="account-details" id="details-${a.id}">
+                            <div class="detail-item">
+                                <div class="detail-value">${a.founded}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value">${a.location}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value">${a.signals} detected</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value" onclick="openModal('${a.id}')" style="cursor:pointer; color: #60a5fa;">View Details →</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('accountsList').innerHTML = html || '<div style="padding: 20px; text-align: center; color: #64748b;">No accounts found</div>';
+        }
+
+        function toggleAccountDetails(element, accountId) {
+            element.classList.toggle('expanded');
+            document.getElementById(`header-${accountId}`).classList.toggle('show');
+            document.getElementById(`details-${accountId}`).classList.toggle('show');
+        }
+
+        function openModal(accountId) {
+            const account = accounts.find(a => a.id === accountId);
+            if (!account) return;
+
+            const combined = ((account.icp + account.intent) / 2).toFixed(0);
+            const html = `
+                <span class="modal-close" onclick="closeModal()">×</span>
+                <div class="modal-title">${account.name}</div>
+
+                <div class="modal-section">
+                    <div class="modal-section-title">Company Overview</div>
+                    <div class="modal-section-content">
+                        <strong>Industry:</strong> ${account.industry}<br>
+                        <strong>Location:</strong> ${account.location}<br>
+                        <strong>Founded:</strong> ${account.founded}<br>
+                        <strong>Size:</strong> ${account.size} employees<br>
+                        <strong>Revenue:</strong> $${account.revenue}M
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <div class="modal-section-title">GTM Scoring</div>
+                    <div class="modal-section-content">
+                        <strong>ICP Fit:</strong> ${account.icp}/100<br>
+                        <strong>Intent Score:</strong> ${account.intent}/100<br>
+                        <strong>Combined Score:</strong> ${combined}/100<br>
+                        <strong>Segment:</strong> ${account.segment.replace(/_/g, ' ')}<br>
+                        <strong>Buying Signals:</strong> ${account.signals} detected
+                    </div>
+                </div>
+
+                <button class="action-btn" onclick="alert('📅 Schedule outreach for ${account.name}')">📅 Schedule Outreach</button>
+            `;
+
+            document.getElementById('modalContent').innerHTML = html;
+            document.getElementById('accountModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('accountModal').classList.remove('show');
+        }
+
+        function exportData() {
+            const filtered = currentFilter === 'all' ? accounts : accounts.filter(a => a.segment === currentFilter);
+            let csv = 'Company,Industry,Location,Size,Revenue,ICP,Intent,Combined,Segment,Founded\n';
+            filtered.forEach(a => {
+                const combined = ((a.icp + a.intent) / 2).toFixed(0);
+                csv += `"${a.name}","${a.industry}","${a.location}",${a.size},${a.revenue},${a.icp},${a.intent},${combined},"${a.segment}",${a.founded}\n`;
+            });
+
+            const blob = new Blob([csv], {type: 'text/csv'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'gtm-accounts-interactive.csv';
+            a.click();
+        }
+
+        document.getElementById('searchInput').addEventListener('keyup', renderAccounts);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStats();
+            initCharts();
+            renderAccounts();
+        });
+    </script>
+</body>
+</html>
