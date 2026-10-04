@@ -1,0 +1,705 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>GTM Premium Dashboard</title>
+
+<style>
+/* DESIGN PLAN: Modern premium dark dashboard with glassmorphism, gradient accents (blue-cyan-purple), smooth animations, and professional typography */
+
+:root {
+  /* Color Palette */
+  --bg-primary: #0a0e27;
+  --bg-secondary: #12172d;
+  --bg-tertiary: #1a1f3a;
+  --glass-light: rgba(255, 255, 255, 0.08);
+  --glass-lighter: rgba(255, 255, 255, 0.12);
+  --accent-primary: #00d4ff;
+  --accent-secondary: #00ff88;
+  --accent-tertiary: #a855f7;
+  --text-primary: #ffffff;
+  --text-secondary: #b0b8d4;
+  --text-muted: #6b7280;
+  --border-color: rgba(0, 212, 255, 0.1);
+  --success: #10b981;
+  --warning: #f59e0b;
+  --critical: #ef4444;
+
+  /* Typography */
+  --font-display: 'Sora', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+
+  /* Spacing & Layout */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 2rem;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fc;
+    --bg-tertiary: #f0f2f8;
+    --glass-light: rgba(0, 0, 0, 0.04);
+    --glass-lighter: rgba(0, 0, 0, 0.06);
+    --text-primary: #0a0e27;
+    --text-secondary: #4b5563;
+    --text-muted: #9ca3af;
+    color-scheme: light;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+body {
+  background-attachment: fixed;
+  padding: 0 var(--spacing-md);
+  padding-top: max(var(--spacing-lg), env(safe-area-inset-top));
+}
+
+@media (max-width: 640px) {
+  body { padding: 0 var(--spacing-sm); padding-top: max(var(--spacing-md), env(safe-area-inset-top)); }
+}
+
+/* Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-lg) 0;
+  margin-bottom: var(--spacing-xl);
+  border-bottom: 1px solid var(--border-color);
+  backdrop-filter: blur(10px);
+  animation: slideDown 0.8s ease-out;
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.theme-toggle {
+  width: 50px;
+  height: 28px;
+  background: var(--glass-light);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.theme-toggle:hover {
+  background: var(--glass-lighter);
+  border-color: var(--accent-primary);
+}
+
+.toggle-dot {
+  width: 24px;
+  height: 24px;
+  background: var(--accent-primary);
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+}
+
+.theme-toggle.light .toggle-dot {
+  transform: translateX(22px);
+}
+
+/* Search Bar */
+.search-container {
+  position: relative;
+  margin-bottom: var(--spacing-xl);
+  animation: slideUp 0.8s ease-out 0.1s both;
+}
+
+.search-box {
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--glass-light);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-family: var(--font-body);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.search-box::placeholder {
+  color: var(--text-muted);
+}
+
+.search-box:focus {
+  outline: none;
+  background: var(--glass-lighter);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+}
+
+/* Metrics Grid */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+  animation: fadeIn 0.8s ease-out 0.2s both;
+}
+
+.metric-card {
+  padding: var(--spacing-lg);
+  background: linear-gradient(135deg, var(--glass-light), var(--glass-lighter));
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
+}
+
+.metric-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--accent-primary);
+  box-shadow: 0 20px 40px rgba(0, 212, 255, 0.15);
+}
+
+.metric-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-sm);
+  font-weight: 500;
+}
+
+.metric-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+  color: var(--accent-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.metric-change {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Charts Section */
+.charts-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+  animation: fadeIn 0.8s ease-out 0.3s both;
+}
+
+.chart-card {
+  padding: var(--spacing-lg);
+  background: linear-gradient(135deg, var(--glass-light), var(--glass-lighter));
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(10px);
+  min-height: 300px;
+}
+
+.chart-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-lg);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+/* Filters */
+.filters {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  margin-bottom: var(--spacing-xl);
+  animation: slideUp 0.8s ease-out 0.15s both;
+}
+
+.filter-btn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--glass-light);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  border-color: var(--accent-primary);
+  color: var(--text-primary);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+}
+
+/* Accounts List */
+.accounts-section {
+  animation: fadeIn 0.8s ease-out 0.4s both;
+}
+
+.accounts-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.account-card {
+  padding: var(--spacing-lg);
+  background: linear-gradient(135deg, var(--glass-light), var(--glass-lighter));
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.account-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, var(--accent-primary), var(--accent-tertiary));
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.account-card:hover {
+  transform: translateX(8px);
+  border-color: var(--accent-primary);
+  box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+}
+
+.account-card:hover::before {
+  opacity: 1;
+}
+
+.account-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-md);
+}
+
+.account-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.account-meta {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.segment-badge {
+  padding: var(--spacing-xs) var(--spacing-md);
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.account-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  font-size: 0.9rem;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.detail-label {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.detail-value {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.score-bar {
+  height: 6px;
+  background: var(--glass-light);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: var(--spacing-xs);
+}
+
+.score-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: var(--spacing-lg) 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-top: var(--spacing-xl);
+  border-top: 1px solid var(--border-color);
+}
+
+/* Animations */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  h1 { font-size: 1.5rem; }
+  .metrics-grid { grid-template-columns: 1fr; }
+  .charts-section { grid-template-columns: 1fr; }
+  .account-details { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 1.2rem; }
+  .filters { gap: var(--spacing-xs); }
+  .filter-btn { padding: var(--spacing-xs) var(--spacing-sm); font-size: 0.8rem; }
+}
+
+/* Print */
+@media print {
+  body { background: white; }
+  .theme-toggle { display: none; }
+}
+</style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+<header>
+  <h1>📊 GTM AI Dashboard</h1>
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <div class="toggle-dot"></div>
+  </button>
+</header>
+
+<main>
+  <div class="search-container">
+    <input type="text" class="search-box" id="searchInput" placeholder="🔍 Search accounts..." onkeyup="filterAccounts()">
+  </div>
+
+  <div class="metrics-grid" id="metricsGrid"></div>
+
+  <div class="charts-section">
+    <div class="chart-card">
+      <div class="chart-title">📈 Segment Distribution</div>
+      <canvas id="segmentChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">🎯 ICP vs Intent Score</div>
+      <canvas id="scatterChart"></canvas>
+    </div>
+  </div>
+
+  <div class="filters" id="filterButtons"></div>
+
+  <div class="accounts-section">
+    <div class="accounts-list" id="accountsList"></div>
+  </div>
+
+  <button onclick="exportCSV()" style="margin-top: var(--spacing-xl); padding: var(--spacing-md) var(--spacing-lg); background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); border: none; color: var(--text-primary); border-radius: var(--radius-lg); cursor: pointer; font-weight: 600; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 15px 40px rgba(0, 212, 255, 0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">📥 Export as CSV</button>
+
+  <footer>✨ Built with GTM AI System | Powered by Claude</footer>
+</main>
+
+<script>
+// Sample data
+const accounts = [
+  {id: 1, name: "TechVenture Solutions", industry: "SaaS", size: 450, revenue: 35.5, location: "US", founded: 2018, icp: 92, intent: 82, segment: "qualified_inbound", signals: ["Demo", "Pricing", "Job"]},
+  {id: 2, name: "DataFlow Analytics", industry: "SaaS", size: 320, revenue: 28.2, location: "US", founded: 2017, icp: 88, intent: 79, segment: "qualified_inbound", signals: ["Demo", "Website", "Pricing"]},
+  {id: 3, name: "CloudScale Corp", industry: "SaaS", size: 580, revenue: 45.8, location: "US", founded: 2016, icp: 95, intent: 85, segment: "qualified_inbound", signals: ["Demo", "Funding", "Exec"]},
+  {id: 4, name: "FinanceEdge Systems", industry: "Financial Services", size: 720, revenue: 62, location: "US", founded: 2015, icp: 87, intent: 48, segment: "strategic_fit", signals: ["Whitepaper", "Job"]},
+  {id: 5, name: "SecureNet Solutions", industry: "Cybersecurity", size: 420, revenue: 38.5, location: "US", founded: 2016, icp: 90, intent: 52, segment: "strategic_fit", signals: ["Job", "LinkedIn"]},
+  {id: 6, name: "MediTrack Inc", industry: "Healthcare", size: 340, revenue: 24, location: "US", founded: 2017, icp: 85, intent: 55, segment: "strategic_fit", signals: ["Website", "Review"]},
+  {id: 7, name: "RetailX Platform", industry: "Retail Tech", size: 280, revenue: 18.5, location: "US", founded: 2019, icp: 72, intent: 42, segment: "emerging", signals: ["LinkedIn", "Job"]},
+  {id: 8, name: "LogisticsPro Systems", industry: "Logistics", size: 195, revenue: 12, location: "US", founded: 2018, icp: 68, intent: 38, segment: "emerging", signals: ["Website", "Competitor"]},
+  {id: 9, name: "StartupHub Labs", industry: "SaaS", size: 85, revenue: 4.2, location: "US", founded: 2022, icp: 45, intent: 22, segment: "low_priority", signals: ["LinkedIn"]},
+  {id: 10, name: "GrowthFirst Consulting", industry: "Consulting", size: 120, revenue: 8.5, location: "US", founded: 2020, icp: 38, intent: 18, segment: "low_priority", signals: ["Competitor"]},
+  {id: 11, name: "InnovateLab Corp", industry: "R&D", size: 250, revenue: 18, location: "Canada", founded: 2016, icp: 52, intent: 28, segment: "low_priority", signals: ["Job"]},
+  {id: 12, name: "DevTools Platform", industry: "SaaS", size: 180, revenue: 10.2, location: "US", founded: 2018, icp: 58, intent: 15, segment: "low_priority", signals: []},
+  {id: 13, name: "CloudNine Systems", industry: "Cloud Services", size: 210, revenue: 15, location: "US", founded: 2017, icp: 48, intent: 25, segment: "low_priority", signals: ["Website"]},
+  {id: 14, name: "StreamData Inc", industry: "Data Analytics", size: 155, revenue: 11, location: "US", founded: 2019, icp: 42, intent: 20, segment: "low_priority", signals: ["Pricing"]},
+  {id: 15, name: "VentureLabs Tech", industry: "SaaS", size: 90, revenue: 3.8, location: "US", founded: 2023, icp: 35, intent: 12, segment: "low_priority", signals: []},
+  {id: 16, name: "AgileWorks Solutions", industry: "Project Management", size: 175, revenue: 9.5, location: "US", founded: 2016, icp: 55, intent: 30, segment: "low_priority", signals: ["Job", "LinkedIn"]},
+  {id: 17, name: "SmallStart LLC", industry: "Services", size: 35, revenue: 1.2, location: "US", founded: 2023, icp: 18, intent: 8, segment: "unqualified", signals: []},
+  {id: 18, name: "LocalBiz Group", industry: "Services", size: 22, revenue: 0.8, location: "US", founded: 2024, icp: 12, intent: 5, segment: "unqualified", signals: []},
+  {id: 19, name: "FamilyOps Company", industry: "Operations", size: 45, revenue: 2, location: "US", founded: 2022, icp: 15, intent: 10, segment: "unqualified", signals: ["Competitor"]},
+  {id: 20, name: "TinyTools Inc", industry: "Tools", size: 12, revenue: 0.5, location: "US", founded: 2024, icp: 8, intent: 3, segment: "unqualified", signals: []}
+];
+
+let currentSegment = "all";
+let filteredAccounts = accounts;
+
+function toggleTheme() {
+  const root = document.documentElement;
+  if (root.getAttribute('data-theme') === 'dark') {
+    root.removeAttribute('data-theme');
+  } else {
+    root.setAttribute('data-theme', 'dark');
+  }
+  document.querySelector('.theme-toggle').classList.toggle('light');
+}
+
+function initMetrics() {
+  const grid = document.getElementById('metricsGrid');
+  const metrics = [
+    { label: 'Total Accounts', value: accounts.length, change: '+12%' },
+    { label: '🔥 Hot Accounts', value: accounts.filter(a => a.segment === 'qualified_inbound').length, change: '+5%' },
+    { label: '📈 Strategic Fit', value: accounts.filter(a => a.segment === 'strategic_fit').length, change: '+3%' },
+    { label: '🎯 Avg ICP Score', value: (accounts.reduce((a, b) => a + b.icp, 0) / accounts.length).toFixed(1), change: '→' }
+  ];
+
+  grid.innerHTML = metrics.map(m => `
+    <div class="metric-card" onclick="filterByMetric('${m.label}')">
+      <div class="metric-label">${m.label}</div>
+      <div class="metric-value">${m.value}</div>
+      <div class="metric-change">${m.change}</div>
+    </div>
+  `).join('');
+}
+
+function initFilters() {
+  const container = document.getElementById('filterButtons');
+  const segments = ['all', 'qualified_inbound', 'strategic_fit', 'emerging', 'low_priority'];
+  const labels = ['All Accounts', '🚀 Hot', '📈 Strategic', '🔥 Emerging', '👀 Cold'];
+
+  container.innerHTML = segments.map((seg, i) => `
+    <button class="filter-btn ${seg === 'all' ? 'active' : ''}" onclick="filterSegment('${seg}')">${labels[i]}</button>
+  `).join('');
+}
+
+function filterSegment(segment) {
+  currentSegment = segment;
+  document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  filterAccounts();
+}
+
+function filterAccounts() {
+  const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+  filteredAccounts = accounts.filter(a => {
+    const matchesSegment = currentSegment === 'all' || a.segment === currentSegment;
+    const matchesSearch = a.name.toLowerCase().includes(searchTerm) || a.industry.toLowerCase().includes(searchTerm);
+    return matchesSegment && matchesSearch;
+  });
+  renderAccounts();
+  updateCharts();
+}
+
+function renderAccounts() {
+  const list = document.getElementById('accountsList');
+  list.innerHTML = filteredAccounts.map(account => `
+    <div class="account-card" onclick="toggleDetails(this)">
+      <div class="account-header">
+        <div>
+          <p class="account-name">${account.name}</p>
+          <p class="account-meta">${account.industry} • ${account.size} employees • $${account.revenue}M</p>
+        </div>
+        <div class="segment-badge">${account.segment.replace(/_/g, ' ').toUpperCase()}</div>
+      </div>
+      <div class="account-details">
+        <div class="detail-item">
+          <div class="detail-label">📅 Founded</div>
+          <div class="detail-value">${account.founded}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">📍 Location</div>
+          <div class="detail-value">${account.location}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">🔔 Signals</div>
+          <div class="detail-value">${account.signals.length > 0 ? account.signals.join(', ') : 'None'}</div>
+        </div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">ICP Score: ${account.icp}</div>
+        <div class="score-bar"><div class="score-fill" style="width: ${account.icp}%"></div></div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Intent Score: ${account.intent}</div>
+        <div class="score-bar"><div class="score-fill" style="width: ${account.intent}%"></div></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function initCharts() {
+  const segmentCtx = document.getElementById('segmentChart').getContext('2d');
+  const segmentCounts = {
+    qualified_inbound: accounts.filter(a => a.segment === 'qualified_inbound').length,
+    strategic_fit: accounts.filter(a => a.segment === 'strategic_fit').length,
+    emerging: accounts.filter(a => a.segment === 'emerging').length,
+    low_priority: accounts.filter(a => a.segment === 'low_priority').length,
+    unqualified: accounts.filter(a => a.segment === 'unqualified').length
+  };
+
+  new Chart(segmentCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Qualified Inbound', 'Strategic Fit', 'Emerging', 'Low Priority', 'Unqualified'],
+      datasets: [{
+        data: Object.values(segmentCounts),
+        backgroundColor: ['rgba(0, 212, 255, 0.8)', 'rgba(0, 255, 136, 0.8)', 'rgba(168, 85, 247, 0.8)', 'rgba(107, 114, 128, 0.8)', 'rgba(239, 68, 68, 0.8)'],
+        borderColor: 'rgba(10, 14, 39, 1)',
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: {
+          labels: { color: 'rgba(255, 255, 255, 0.8)', font: { size: 12 } }
+        }
+      }
+    }
+  });
+
+  const scatterCtx = document.getElementById('scatterChart').getContext('2d');
+  const scatterData = accounts.map(a => ({ x: a.icp, y: a.intent, label: a.name }));
+
+  new Chart(scatterCtx, {
+    type: 'bubble',
+    data: {
+      datasets: [{
+        label: 'Accounts',
+        data: scatterData.map(d => ({ x: d.x, y: d.y, r: 8 })),
+        backgroundColor: 'rgba(0, 212, 255, 0.6)',
+        borderColor: 'rgba(0, 212, 255, 1)',
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: {
+          labels: { color: 'rgba(255, 255, 255, 0.8)' }
+        }
+      },
+      scales: {
+        x: { min: 0, max: 100, ticks: { color: 'rgba(255, 255, 255, 0.6)' }, grid: { color: 'rgba(255, 255, 255, 0.05)' } },
+        y: { min: 0, max: 100, ticks: { color: 'rgba(255, 255, 255, 0.6)' }, grid: { color: 'rgba(255, 255, 255, 0.05)' } }
+      }
+    }
+  });
+}
+
+function updateCharts() {
+  // Recreate charts with filtered data
+  document.getElementById('segmentChart').remove();
+  document.getElementById('scatterChart').remove();
+  document.querySelector('.charts-section').innerHTML = `
+    <div class="chart-card">
+      <div class="chart-title">📈 Segment Distribution</div>
+      <canvas id="segmentChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">🎯 ICP vs Intent Score</div>
+      <canvas id="scatterChart"></canvas>
+    </div>
+  `;
+  initCharts();
+}
+
+function exportCSV() {
+  let csv = 'Name,Industry,Size,Revenue,Location,Founded,ICP,Intent,Segment\n';
+  filteredAccounts.forEach(a => {
+    csv += `${a.name},${a.industry},${a.size},$${a.revenue}M,${a.location},${a.founded},${a.icp},${a.intent},${a.segment}\n`;
+  });
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'gtm_accounts.csv';
+  a.click();
+}
+
+// Initialize
+initMetrics();
+initFilters();
+renderAccounts();
+initCharts();
+</script>
+
+</body></html>
